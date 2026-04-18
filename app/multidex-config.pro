@@ -1,0 +1,2 @@
+-keep class com.example.cliovision.MainActivity { *; }
+-keep class androidx.multidex.** { *; }
