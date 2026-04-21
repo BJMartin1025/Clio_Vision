@@ -10,29 +10,24 @@ import kotlinx.coroutines.withContext
 import com.example.cliovision.BuildConfig
 
 class GeminiPipeline {
-
+    private val systemPrompt = """
+        You are Clio, a campus tour guide for Missouri S&T.
+        Respond in 1-2 sentences only. Be warm and informative.
+        If you recognize a campus building, name it and share one interesting fact.
+        Never mention you are an AI.
+    """.trimIndent()
     private val config = generationConfig {
-        temperature = 0.4f
-        maxOutputTokens = 75
+        temperature = 0.1f  // Minimal creativity
+        topK = 1            // Only pick the #1 most likely word
+        topP = 0.95f
+        maxOutputTokens = 1000
     }
     private val model = GenerativeModel(
         modelName = "gemini-2.5-flash",
         apiKey = BuildConfig.GEMINI_API_KEY,
-        generationConfig = config
+        generationConfig = config,
+        systemInstruction = content { text(systemPrompt) }
     )
-
-    private val systemPrompt = """
-    You are Clio, a campus tour guide for [Your University Name].
-    Respond in 1-2 sentences only. Be warm and informative.
-    If you recognize a campus building, name it and share one interesting fact.
-    Never mention you are an AI.
-    
-    Campus buildings:
-    - Emerson Electric Hall: Engineering building, houses ECE department
-    - Parker Hall: Historic arts and sciences building, built 1923
-    - Engineering Management: Business and engineering programs, renovated 2019
-    (add your other buildings here in this short format)
-""".trimIndent()
 
     // Send a camera frame + transcribed question to Gemini
     suspend fun sendImageAndQuestion(
@@ -40,25 +35,20 @@ class GeminiPipeline {
         question: String
     ): Result<String> = withContext(Dispatchers.IO) {
         try {
-            val prompt = content {
+            // 3. User content is now strictly for the image and the new question
+            val userContent = content {
                 image(bitmap)
-                text("$systemPrompt\n\nVisitor question: $question")
+                text("Visitor question: $question")
             }
 
-            // Override config at request level to guarantee token limit
-            val requestConfig = generationConfig {
-                temperature = 0.4f
-                maxOutputTokens = 50
-            }
-
-            val response = model.generateContent(prompt)
+            val response = model.generateContent(userContent)
             val responseText = response.text
 
             if (responseText != null) {
                 Log.d("GeminiPipeline", "Response: $responseText")
                 Result.success(responseText)
             } else {
-                Result.failure(Exception("Empty response from Gemini"))
+                Result.failure(Exception("Empty response"))
             }
         } catch (e: Exception) {
             Log.e("GeminiPipeline", "Request failed: ${e.message}")
