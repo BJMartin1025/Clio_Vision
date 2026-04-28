@@ -8,6 +8,15 @@
     android:padding="16dp">
 
     <TextView
+        android:id="@+id/locationText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Locating..."
+        android:textSize="14sp"
+        android:textColor="#888888"
+        android:padding="8dp"/>
+
+    <TextView
         android:id="@+id/statusText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -15,24 +24,68 @@
         android:textSize="18sp"
         android:padding="16dp"/>
 
+    <!-- Gemini response window -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginVertical="8dp">
+
+        <TextView
+            android:id="@+id/responseText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="16sp"
+            android:lineSpacingMultiplier="1.4"
+            android:padding="16dp"
+            android:background="@drawable/response_background"
+            android:hint="Clio's response will appear here..."
+            android:textColorHint="#AAAAAA"/>
+
+    </ScrollView>
+
+    <!-- Real glasses button -->
+    <Button
+        android:id="@+id/connectGlassesButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Connect Glasses"
+        android:backgroundTint="#4CAF50"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#DDDDDD"
+        android:layout_marginVertical="8dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Emulator Testing"
+        android:textSize="12sp"
+        android:textColor="#888888"/>
+
+    <!-- Mock buttons — for emulator testing -->
     <Button
         android:id="@+id/connectMockButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Connect Mock Glasses"/>
+        android:text="Load Test Image"/>
 
     <Button
         android:id="@+id/testButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Test Pipeline"
+        android:text="Ask Clio"
         android:enabled="false"/>
 
     <Button
         android:id="@+id/disconnectMockButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Disconnect Mock Glasses"
+        android:text="Reset"
         android:enabled="false"/>
 
 </LinearLayout>

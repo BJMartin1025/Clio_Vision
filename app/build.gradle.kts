@@ -100,4 +100,10 @@ dependencies {
 
     implementation("androidx.multidex:multidex:2.0.1")
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    implementation("com.google.android.gms:play-services-location:21.0.1")
+    implementation("org.apache.poi:poi:5.2.3")
+    implementation("org.apache.poi:poi-ooxml:5.2.3")
+    implementation("org.apache.poi:poi-ooxml:5.2.3") {
+        exclude(group = "org.apache.xmlbeans", module = "xmlbeans")
+    }
 }

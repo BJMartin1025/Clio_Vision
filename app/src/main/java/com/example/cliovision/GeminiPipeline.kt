@@ -32,23 +32,31 @@ class GeminiPipeline {
     // Send a camera frame + transcribed question to Gemini
     suspend fun sendImageAndQuestion(
         bitmap: Bitmap,
-        question: String
+        question: String,
+        locationContext: String = ""  // new parameter
     ): Result<String> = withContext(Dispatchers.IO) {
         try {
-            // 3. User content is now strictly for the image and the new question
-            val userContent = content {
-                image(bitmap)
-                text("Visitor question: $question")
+            val fullPrompt = buildString {
+                append(systemPrompt)
+                if (locationContext.isNotEmpty()) {
+                    append("\n\nCURRENT LOCATION CONTEXT:\n$locationContext")
+                }
+                append("\n\nVisitor question: $question")
             }
 
-            val response = model.generateContent(userContent)
+            val prompt = content {
+                image(bitmap)
+                text(fullPrompt)
+            }
+
+            val response = model.generateContent(prompt)
             val responseText = response.text
 
             if (responseText != null) {
                 Log.d("GeminiPipeline", "Response: $responseText")
                 Result.success(responseText)
             } else {
-                Result.failure(Exception("Empty response"))
+                Result.failure(Exception("Empty response from Gemini"))
             }
         } catch (e: Exception) {
             Log.e("GeminiPipeline", "Request failed: ${e.message}")
